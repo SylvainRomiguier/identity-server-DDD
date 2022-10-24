@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Permission {
+  name           String          @id @db.VarChar(255)
+  PermissionSets PermissionSet[]
+}
+
+model PermissionSet {
+  id          String       @id @db.Uuid
+  name        String       @unique @db.VarChar(255)
+  Permissions Permission[]
+  Licenses    License[]
+}
+
+model License {
+  id                         String                       @id @db.Uuid
+  name                       String                       @unique @db.VarChar(255)
+  PermissionSets             PermissionSet[]
+  LicenseAttribution         LicenseAttribution[]
+  ArchivedLicenseAttribution ArchivedLicenseAttribution[]
+}
+
+model ArchivedLicenseAttribution {
+  License        License  @relation(fields: [licenseId], references: [id])
+  User           User     @relation(fields: [userId], references: [id])
+  expirationDate DateTime @default(now())
+  suspended      Boolean  @default(false)
+  licenseId      String   @db.Uuid
+  userId         String   @db.Uuid
+
+  @@id([userId, licenseId, expirationDate])
+}
+
+model LicenseAttribution {
+  License        License  @relation(fields: [licenseId], references: [id])
+  User           User     @relation(fields: [userId], references: [id])
+  expirationDate DateTime @default(now())
+  suspended      Boolean  @default(false)
+  licenseId      String   @db.Uuid
+  userId         String   @db.Uuid
+
+  @@id([userId, licenseId])
+}
+
+model User {
+  id                         String                       @id @db.Uuid
+  createdAt                  DateTime                     @default(now())
+  updatedAt                  DateTime                     @updatedAt
+  firstName                  String                       @db.VarChar(255)
+  lastName                   String                       @db.VarChar(255)
+  userName                   String                       @db.VarChar(255) @unique
+  email                      String                       @db.VarChar(255) @unique
+  salt                       String                       @db.VarChar(255)
+  password                   String                       @db.VarChar(255)
+  LicenseAttribution         LicenseAttribution[]
+  ArchivedLicenseAttribution ArchivedLicenseAttribution[]
+}
