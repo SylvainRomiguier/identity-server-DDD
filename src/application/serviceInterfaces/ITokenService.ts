@@ -1,3 +1,4 @@
 export interface ITokenService {
-    verify: (token:string) => Promise<string>;
+    verify: (token:string) => string;
+    sign: (payload: {userId:string}) => string;
 }

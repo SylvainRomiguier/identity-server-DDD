@@ -3,7 +3,7 @@ import { User } from "../domain/User";
 import { IPasswordService } from "./serviceInterfaces/IPasswordService";
 import { IUserService } from "./serviceInterfaces/IUserService";
 
-export class VerifyPassword {
+export class VerifyUserPassword {
   constructor(
     private userService: IUserService,
     private passwordService: IPasswordService

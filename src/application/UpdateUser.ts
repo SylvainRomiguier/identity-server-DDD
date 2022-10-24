@@ -3,7 +3,7 @@ import { IPasswordService } from "./serviceInterfaces/IPasswordService";
 import { IUserService } from "./serviceInterfaces/IUserService";
 import { User } from "../domain/User";
 
-export class PersistUser {
+export class UpdateUser {
     constructor(private userService: IUserService, private passwordService:IPasswordService) {}
     async for(user:User, plainTextPassword?: string) {
         let hash: Hash | undefined = undefined;
