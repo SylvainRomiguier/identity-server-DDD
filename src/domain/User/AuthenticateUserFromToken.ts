@@ -1,5 +1,5 @@
-import { ITokenService } from "./serviceInterfaces/ITokenService";
-import { IUserService } from "./serviceInterfaces/IUserService";
+import { ITokenService } from "../serviceInterfaces/ITokenService";
+import { IUserService } from "../serviceInterfaces/IUserService";
 
 export class AuthenticateUserFromToken {
   constructor(

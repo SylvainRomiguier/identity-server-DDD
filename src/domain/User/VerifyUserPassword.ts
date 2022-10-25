@@ -1,7 +1,7 @@
-import { Password } from "../domain/Password";
-import { User } from "../domain/User";
-import { IPasswordService } from "./serviceInterfaces/IPasswordService";
-import { IUserService } from "./serviceInterfaces/IUserService";
+import { Password } from "./Password";
+import { User } from "./User";
+import { IPasswordService } from "../serviceInterfaces/IPasswordService";
+import { IUserService } from "../serviceInterfaces/IUserService";
 
 export class VerifyUserPassword {
   constructor(

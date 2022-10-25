@@ -1,45 +1,40 @@
-import { IUserService } from "../application/serviceInterfaces/IUserService";
-import { Email } from "../domain/Email";
-import { Hash } from "../domain/Hash";
-import { User } from "../domain/User";
+import { IUserService } from "../domain/serviceInterfaces/IUserService";
+import { Email } from "../domain/User/Email";
+import { Hash } from "../domain/User/Hash";
+import { NewUser } from "../domain/User/NewUser";
+import { User } from "../domain/User/User";
 import { DBService } from "./db.prisma.service";
 
 export class UserService implements IUserService {
   constructor(private dbService: DBService) {}
-  async persistUser(user: User, hash?: Hash | undefined) {
+  async addUser(user: NewUser) {
     const prisma = await this.dbService.getClient();
-    const existingUser = await prisma.user.findUnique({
-      where: { id: user.get().id },
+    const newUser = await prisma.user.create({
+      data: {
+        id: user.get().id,
+        firstName: user.get().firstName,
+        lastName: user.get().lastName,
+        userName: user.get().userName,
+        email: user.get().email,
+        password: user.get().hash.get().hashedPassword,
+        salt: user.get().hash.get().salt,
+      },
     });
-    if (!existingUser) {
-      if (!hash) {
-        throw new Error(
-          `A hash is mandatory to create a new user, user ${user.get().id}.`
-        );
-      }
-      const newUser = await prisma.user.create({
-        data: {
-          id: user.get().id,
-          firstName: user.get().firstName,
-          lastName: user.get().lastName,
-          userName: user.get().userName,
-          email: user.get().email,
-          password: hash.get().hashedPassword,
-          salt: hash?.get().salt,
-        },
-      });
-      await this.dbService.disconnect();
-      return new User(newUser);
-    }
-
-    let newValues = {
-      ...user.get(),
-      password: hash?.get().hashedPassword,
-      salt: hash?.get().salt,
-    };
+    await this.dbService.disconnect();
+    return new User(newUser);
+  }
+  async updateUser(user: User, hash?: Hash | undefined) {
+    const prisma = await this.dbService.getClient();
     const updatedUser = await prisma.user.update({
       where: { id: user.get().id },
-      data: newValues,
+      data: {
+        firstName: user.get().firstName,
+        lastName: user.get().lastName,
+        userName: user.get().userName,
+        email: user.get().email,
+        password: hash?.get().hashedPassword,
+        salt: hash?.get().salt,
+      },
     });
     await this.dbService.disconnect();
     return new User(updatedUser);

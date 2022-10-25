@@ -1,6 +1,7 @@
-import { Hash } from "../domain/Hash";
-import { Password } from "../domain/Password";
-import { IPasswordService } from "./serviceInterfaces/IPasswordService";
+import { IPasswordService } from "../serviceInterfaces/IPasswordService";
+import { Hash } from "./Hash";
+import { Password } from "./Password";
+
 
 export class CreatePassword {
   constructor(private passwordService: IPasswordService) {}

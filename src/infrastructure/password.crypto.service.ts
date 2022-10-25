@@ -1,6 +1,6 @@
-import { IPasswordService } from "../application/serviceInterfaces/IPasswordService";
+import { IPasswordService } from "../domain/serviceInterfaces/IPasswordService";
 import crypto from "crypto";
-import { Hash } from "../domain/Hash";
+import { Hash } from "../domain/User/Hash";
 
 export class PasswordService implements IPasswordService {
   async verifyPassword(plainTextPassword: string, hash: Hash) {

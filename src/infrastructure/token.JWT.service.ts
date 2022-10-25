@@ -1,4 +1,4 @@
-import { ITokenService } from "../application/serviceInterfaces/ITokenService";
+import { ITokenService } from "../domain/serviceInterfaces/ITokenService";
 import jsonwebtoken from "jsonwebtoken";
 
 export class TokenService implements ITokenService {

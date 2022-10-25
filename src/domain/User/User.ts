@@ -9,11 +9,11 @@ export type UserDto = {
 } 
 
 export class User {
-    private id: string;
-    private lastName: string;
-    private firstName: string;
-    private email: Email;
-    private userName: string;
+    protected id: string;
+    protected lastName: string;
+    protected firstName: string;
+    protected email: Email;
+    protected userName: string;
     constructor(user: UserDto) {
         this.id = user.id;
         this.firstName = user.firstName;
@@ -21,6 +21,7 @@ export class User {
         this.userName = user.userName;
         this.email = new Email(user.email);
     }
+
     get () {
         return {
             id: this.id,
