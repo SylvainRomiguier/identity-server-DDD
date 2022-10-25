@@ -6,10 +6,10 @@ import { UserDto } from "./User";
 
 export class CreateUser {
     constructor(private uuidService: IUUIDService, private userService: IUserService, private passwordService:IPasswordService) {}
-    async with(user: Omit<UserDto, "id">, plainTextPassword:string) {
+    async with(user: Omit<UserDto, "id"> & {password:string;}) {
         const newUser = new NewUser({
             id: this.uuidService.getRandomUUID(),
-            hash: await this.passwordService.createPassword(plainTextPassword),
+            hash: await this.passwordService.createPassword(user.password),
             ...user});
         const persistedUser = await this.userService.addUser(newUser);
         return persistedUser;

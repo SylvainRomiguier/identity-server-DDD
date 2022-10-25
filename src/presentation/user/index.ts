@@ -85,14 +85,8 @@ async function addUserHandler(req: FastifyRequest, res: FastifyReply) {
 
   try {
     if (validatorResponse.dto) {
-      const userDto = {
-        firstName: validatorResponse.dto.firstName,
-        lastName: validatorResponse.dto.lastName,
-        email: validatorResponse.dto.email,
-        userName: validatorResponse.dto.userName,
-      };
-      const password = validatorResponse.dto.password;
-      const user = await createUser.with(userDto, password);
+      const userDto = validatorResponse.dto;
+      const user = await createUser.with(validatorResponse.dto);
       res.code(200).send(user.get());
     }
   } catch (e) {
@@ -108,7 +102,7 @@ async function updateUserHandler(req: FastifyRequest, res: FastifyReply) {
       lastName: string;
       email: string;
       userName: string;
-      password: string;
+      password?: string;
     }
   );
   if (validatorResponse.message) {
@@ -154,7 +148,13 @@ function validAddUserDto(body: {
     };
   }
   return {
-    dto: body,
+    dto: {
+      firstName: body.firstName,
+      lastName: body.lastName,
+      userName: body.userName,
+      email: body.email,
+      password: body.password
+    },
   };
 }
 
@@ -164,22 +164,28 @@ function validUpdateUserDto(body: {
   lastName: string;
   email: string;
   userName: string;
-  password: string;
+  password?: string;
 }) {
   if (
     !body.id ||
     !body.firstName ||
     !body.lastName ||
     !body.userName ||
-    !body.password ||
     !body.email
   ) {
     return {
       message:
-        "id, firstName, lastName, userName, email and password are mandatory.",
+        "id, firstName, lastName, userName and email are mandatory.",
     };
   }
   return {
-    dto: body,
+    dto: {
+      id: body.id,
+      firstName: body.firstName,
+      lastName: body.lastName,
+      email: body.email,
+      userName: body.userName,
+      password: body.password
+    },
   };
 }

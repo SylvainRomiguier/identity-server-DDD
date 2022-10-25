@@ -11,8 +11,8 @@ const start = async () => {
     await server.register(swagger, {
       swagger: {
         info: {
-          title: "Test swagger",
-          description: "Testing the Fastify swagger API",
+          title: "Identity and Licenses management server",
+          description: "",
           version: "0.1.0",
         },
         externalDocs: {
