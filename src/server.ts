@@ -8,10 +8,7 @@ const server = fastify({ logger: true });
 
 const start = async () => {
   try {
-    await server.register(userRoutes);
-
-    await server.register(swagger
-      , {
+    await server.register(swagger, {
       swagger: {
         info: {
           title: "Test swagger",
@@ -48,8 +45,9 @@ const start = async () => {
           },
         },
       },
-    }
-    );
+    });
+
+    await server.register(userRoutes);
 
     await server.register(swaggerUi, {
       routePrefix: "/documentation",
