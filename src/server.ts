@@ -2,6 +2,9 @@ import fastify from "fastify";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import userRoutes from "./presentation/user";
+import licenseRoutes from "./presentation/license";
+import permissionRoutes from "./presentation/permission";
+import permissionSetRoutes from "./presentation/permissionSet";
 import "./dependency_injections";
 
 const server = fastify({ logger: true });
@@ -23,17 +26,44 @@ const start = async () => {
         schemes: ["http"],
         consumes: ["application/json"],
         produces: ["application/json"],
-        tags: [{ name: "user", description: "User related end-points" }],
+        tags: [
+          { name: "user", description: "User related end-points" },
+          { name: "license", description: "License related end-points" },
+          { name: "permission", description: "Permissions related end-points" },
+          { name: "permission set", description: "Permission Sets related end-points" },
+        ],
         definitions: {
           User: {
             type: "object",
-            required: ["id", "email"],
+            required: ["id", "email", "firstName", "lastName", "userName"],
             properties: {
               id: { type: "string", format: "uuid" },
               firstName: { type: "string" },
               lastName: { type: "string" },
               userName: { type: "string" },
               email: { type: "string", format: "email" },
+            },
+          },
+          PermissionSet: {
+            type: "object",
+            required: ["id", "name"],
+            properties: {
+              id: { type: "string", format: "uuid" },
+              name: { type: "string" },
+            },
+          },
+          License: {
+            type: "object",
+            required: ["id", "name", "permissionSets"],
+            properties: {
+              id: { type: "string", format: "uuid" },
+              name: { type: "string" },
+              permissionSets: {
+                type: "array",
+                items: {
+                  type: "PermissionSet",
+                },
+              },
             },
           },
         },
@@ -48,6 +78,9 @@ const start = async () => {
     });
 
     await server.register(userRoutes);
+    await server.register(licenseRoutes);
+    await server.register(permissionRoutes);
+    await server.register(permissionSetRoutes);
 
     await server.register(swaggerUi, {
       routePrefix: "/documentation",
