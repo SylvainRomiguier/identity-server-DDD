@@ -10,13 +10,15 @@ export class UserRepository implements IUserRepository {
   constructor(private dbService: DBService) {}
   async getAllLicenseAttributionsFromUser(userId: string) {
     const prisma = await this.dbService.getClient();
-    const licensesAttributions = await prisma.licenseAttribution.findMany({where: {userId}});
+    const licensesAttributions = await prisma.licenseAttribution.findMany({
+      where: { userId },
+    });
     await this.dbService.disconnect();
-    return licensesAttributions.map(la => new LicenseAttribution(la));
+    return licensesAttributions.map((la) => new LicenseAttribution(la));
   }
   async saveLicenseAttribution(licenseAttribution: LicenseAttribution) {
     const prisma = await this.dbService.getClient();
-    await prisma.licenseAttribution.create({data: licenseAttribution.get()});
+    await prisma.licenseAttribution.create({ data: licenseAttribution.get() });
     await this.dbService.disconnect();
   }
   async addUser(user: NewUser) {
@@ -58,12 +60,9 @@ export class UserRepository implements IUserRepository {
   }
   async getUserById(id: string) {
     const prisma = await this.dbService.getClient();
-    const user = await prisma.user.findUnique({ where: { id } });
+    const user = await prisma.user.findUniqueOrThrow({ where: { id } });
     await this.dbService.disconnect();
-    if (user) {
-      return new User(user);
-    }
-    return undefined;
+    return new User(user);
   }
   async getUserByEmail(email: Email) {
     const prisma = await this.dbService.getClient();

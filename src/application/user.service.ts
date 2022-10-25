@@ -39,6 +39,15 @@ export class UserService {
   async remove(user: User) {
     await this.userRepository.removeUser(user.get().id);
   }
+
+  async getUserById(id:string) {
+    return this.userRepository.getUserById(id);
+  }
+
+  async getLicenseAttributionsByUserId(userId:string) {
+    return this.userRepository.getAllLicenseAttributionsFromUser(userId);
+  }
+
   async createPassword(plainTextPassword: string): Promise<Hash> {
     const password = new Password(plainTextPassword);
     return this.passwordService.createPassword(password.get());
