@@ -1,13 +1,8 @@
-import { AuthenticateUserFromToken } from "./domain/User/AuthenticateUserFromToken";
-import { CreatePassword } from "./domain/User/CreatePassword";
-import { CreateUser } from "./domain/User/CreateUser";
-import { RemoveUser } from "./domain/User/RemoveUser";
-import { UpdateUser } from "./domain/User/UpdateUser";
-import { VerifyUserPassword } from "./domain/User/VerifyUserPassword";
+import { UserService } from "./application/user.service";
 import { DBService } from "./infrastructure/db.prisma.service";
 import { PasswordService } from "./infrastructure/password.crypto.service";
 import { TokenService } from "./infrastructure/token.JWT.service";
-import { UserService } from "./infrastructure/user.postgres.service";
+import { UserRepository } from "./infrastructure/user.postgres.repository";
 import { UUIDService } from "./infrastructure/uuid.service";
 
 // Services
@@ -17,7 +12,7 @@ if (!process.env.PRIVATE_KEY || !process.env.PUBLIC_KEY) {
 }
 const dbService = new DBService();
 const uuidService = new UUIDService();
-const userService = new UserService(dbService);
+const userRepository = new UserRepository(dbService);
 const passwordService = new PasswordService();
 const tokenService = new TokenService(
   process.env.PRIVATE_KEY,
@@ -25,19 +20,6 @@ const tokenService = new TokenService(
 );
 
 // Application
-export const createPassword = new CreatePassword(passwordService);
-export const authenticateUserFromToken = new AuthenticateUserFromToken(
-  userService,
-  tokenService
-);
-export const verifyUserPassword = new VerifyUserPassword(
-  userService,
-  passwordService
-);
-export const createUser = new CreateUser(
-  uuidService,
-  userService,
-  passwordService
-);
-export const updateUser = new UpdateUser(userService, passwordService);
-export const removeUser = new RemoveUser(userService);
+export const userService = new UserService(uuidService, userRepository, passwordService, tokenService);
+
+

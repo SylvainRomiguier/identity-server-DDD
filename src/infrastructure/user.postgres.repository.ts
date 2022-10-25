@@ -1,12 +1,24 @@
-import { IUserService } from "../domain/serviceInterfaces/IUserService";
+import { IUserRepository } from "../application/serviceInterfaces/IUserRepository";
+import { LicenseAttribution } from "../domain/User/LicenseAttribution";
 import { Email } from "../domain/User/Email";
 import { Hash } from "../domain/User/Hash";
 import { NewUser } from "../domain/User/NewUser";
 import { User } from "../domain/User/User";
 import { DBService } from "./db.prisma.service";
 
-export class UserService implements IUserService {
+export class UserRepository implements IUserRepository {
   constructor(private dbService: DBService) {}
+  async getAllLicenseAttributionsFromUser(userId: string) {
+    const prisma = await this.dbService.getClient();
+    const licensesAttributions = await prisma.licenseAttribution.findMany({where: {userId}});
+    await this.dbService.disconnect();
+    return licensesAttributions.map(la => new LicenseAttribution(la));
+  }
+  async saveLicenseAttribution(licenseAttribution: LicenseAttribution) {
+    const prisma = await this.dbService.getClient();
+    await prisma.licenseAttribution.create({data: licenseAttribution.get()});
+    await this.dbService.disconnect();
+  }
   async addUser(user: NewUser) {
     const prisma = await this.dbService.getClient();
     const newUser = await prisma.user.create({

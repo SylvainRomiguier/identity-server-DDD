@@ -1,5 +1,5 @@
-import { ITokenService } from "../domain/serviceInterfaces/ITokenService";
 import jsonwebtoken from "jsonwebtoken";
+import { ITokenService } from "../application/serviceInterfaces/ITokenService";
 
 export class TokenService implements ITokenService {
   constructor(private privateKey: string, private publicKey: string) {

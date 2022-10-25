@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { createUser, updateUser } from "../../dependency_injections";
+import { userService } from "../../dependency_injections";
 
 export default function (server:FastifyInstance, opts:any, done: () => void) {
   server.post("/user", {
@@ -85,8 +85,7 @@ async function addUserHandler(req: FastifyRequest, res: FastifyReply) {
 
   try {
     if (validatorResponse.dto) {
-      const userDto = validatorResponse.dto;
-      const user = await createUser.with(validatorResponse.dto);
+      const user = await userService.create(validatorResponse.dto);
       res.code(200).send(user.get());
     }
   } catch (e) {
@@ -120,7 +119,7 @@ async function updateUserHandler(req: FastifyRequest, res: FastifyReply) {
         userName: validatorResponse.dto.userName,
       };
       const password = validatorResponse.dto.password;
-      const user = await updateUser.with(userDto, password);
+      const user = await userService.update(userDto, password);
       res.code(200).send(user.get());
     }
   } catch (e) {

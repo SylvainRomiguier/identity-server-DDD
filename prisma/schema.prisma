@@ -11,15 +11,15 @@ datasource db {
 }
 
 model Permission {
-  name           String          @id @db.VarChar(255)
-  PermissionSets PermissionSet[]
+  name                      String                      @id @db.VarChar(255)
+  PermissionSets            PermissionSet[]
 }
 
 model PermissionSet {
-  id          String       @id @db.Uuid
-  name        String       @unique @db.VarChar(255)
-  Permissions Permission[]
-  Licenses    License[]
+  id                        String                      @id @db.Uuid
+  name                      String                      @unique @db.VarChar(255)
+  Permissions               Permission[]
+  Licenses                  License[]
 }
 
 model License {
@@ -58,8 +58,8 @@ model User {
   updatedAt                  DateTime                     @updatedAt
   firstName                  String                       @db.VarChar(255)
   lastName                   String                       @db.VarChar(255)
-  userName                   String                       @db.VarChar(255) @unique
-  email                      String                       @db.VarChar(255) @unique
+  userName                   String                       @unique @db.VarChar(255)
+  email                      String                       @unique @db.VarChar(255)
   salt                       String                       @db.VarChar(255)
   password                   String                       @db.VarChar(255)
   LicenseAttribution         LicenseAttribution[]

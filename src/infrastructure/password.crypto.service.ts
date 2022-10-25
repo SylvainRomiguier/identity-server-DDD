@@ -1,5 +1,5 @@
-import { IPasswordService } from "../domain/serviceInterfaces/IPasswordService";
 import crypto from "crypto";
+import { IPasswordService } from "../application/serviceInterfaces/IPasswordService";
 import { Hash } from "../domain/User/Hash";
 
 export class PasswordService implements IPasswordService {
