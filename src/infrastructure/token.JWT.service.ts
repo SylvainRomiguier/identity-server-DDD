@@ -1,25 +1,27 @@
 import jsonwebtoken from "jsonwebtoken";
-import { ITokenService } from "../application/serviceInterfaces/ITokenService";
+import { ITokenProvider } from "../application/infrastructureInterfaces/ITokenProvider";
+import { Token } from "../domain/Authentication/Token";
+import { PayloadDto, TokenPayload } from "../domain/Authentication/TokenPayload";
 
-export class TokenService implements ITokenService {
+export class TokenProvider implements ITokenProvider {
   constructor(private privateKey: string, private publicKey: string) {
     if (!privateKey || !publicKey) {
       throw new Error("Private and public keys are mandatory.");
     }
   }
-  verify(token: string) {
-    const payload = jsonwebtoken.verify(token, this.publicKey, {
+  verify(token: Token) {
+    const payload = jsonwebtoken.verify(token.get(), this.publicKey, {
       algorithms: ["RS256"],
     });
-    if (!(payload as { userId: string }).userId) {
+    if (!(payload as PayloadDto)) {
       throw new Error("Bad token.");
     }
-    return (payload as { userId: string }).userId;
+    return new TokenPayload((payload as PayloadDto));
   }
-  sign(payload: { userId: string }): string {
+  sign(payload: { userId: string }): Token {
     const token = jsonwebtoken.sign(payload, this.privateKey, {
       algorithm: "RS256",
     });
-    return token;
+    return new Token(token);
   }
 }

@@ -1,3 +1,3 @@
-export interface IUUIDService {
+export interface IUUIDProvider {
     getRandomUUID: () => string;
 }

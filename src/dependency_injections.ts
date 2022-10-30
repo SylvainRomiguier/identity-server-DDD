@@ -1,11 +1,12 @@
+import { AuthenticationService } from "./application/authentication.service";
 import { LicenseService } from "./application/license.service";
 import { UserService } from "./application/user.service";
 import { DBService } from "./infrastructure/db.prisma.service";
 import { LicenseRepository } from "./infrastructure/license.postgres.repository";
-import { PasswordService } from "./infrastructure/password.crypto.service";
-import { TokenService } from "./infrastructure/token.JWT.service";
+import { PasswordProvider } from "./infrastructure/password.crypto.service";
+import { TokenProvider } from "./infrastructure/token.JWT.service";
 import { UserRepository } from "./infrastructure/user.postgres.repository";
-import { UUIDService } from "./infrastructure/uuid.service";
+import { UUIDProvider } from "./infrastructure/uuid.service";
 
 // Services
 if (!process.env.PRIVATE_KEY || !process.env.PUBLIC_KEY) {
@@ -13,18 +14,27 @@ if (!process.env.PRIVATE_KEY || !process.env.PUBLIC_KEY) {
   process.exit(1);
 }
 const dbService = new DBService();
-const uuidService = new UUIDService();
+const uuidService = new UUIDProvider();
 const userRepository = new UserRepository(dbService);
 const licenseRepository = new LicenseRepository(dbService);
-const passwordService = new PasswordService();
-const tokenService = new TokenService(
+const passwordService = new PasswordProvider();
+const tokenService = new TokenProvider(
   process.env.PRIVATE_KEY,
   process.env.PUBLIC_KEY
 );
 
 // Application
-export const userService = new UserService(uuidService, userRepository, passwordService, tokenService);
-export const licenseService = new LicenseService(licenseRepository,uuidService);
-
-
-
+export const userService = new UserService(
+  uuidService,
+  userRepository,
+  passwordService,
+  licenseRepository
+);
+export const licenseService = new LicenseService(
+  licenseRepository,
+  uuidService
+);
+export const authenticationService = new AuthenticationService(
+  userService,
+  tokenService
+);

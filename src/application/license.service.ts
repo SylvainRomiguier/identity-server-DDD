@@ -1,17 +1,19 @@
 import { License, LicenseDto } from "../domain/License/License";
 import { Permission } from "../domain/License/Permission";
 import { PermissionSet, PermissionSetDto } from "../domain/License/PermissionSet";
-import { ILicenseRepository } from "./serviceInterfaces/ILicenseRepository";
-import { IUUIDService } from "./serviceInterfaces/IUUIDService";
+import { User } from "../domain/User/User";
+import { ILicenseRepository } from "./infrastructureInterfaces/ILicenseRepository";
+import { IUserRepository } from "./infrastructureInterfaces/IUserRepository";
+import { IUUIDProvider } from "./infrastructureInterfaces/IUUIDProvider";
 
 export class LicenseService {
   constructor(
     private licenseRepository: ILicenseRepository,
-    private uuidService: IUUIDService
+    private uuidProvider: IUUIDProvider,
   ) {}
   async create(license: Omit<LicenseDto, "id">) {
     const newLicense = new License({
-      id: this.uuidService.getRandomUUID(),
+      id: this.uuidProvider.getRandomUUID(),
       name: license.name,
       PermissionSets: [],
     });
@@ -42,7 +44,7 @@ export class LicenseService {
 
   async createPermissionSet(permissionSetName: string) {
     const permissionSet = new PermissionSet({
-      id: this.uuidService.getRandomUUID(),
+      id: this.uuidProvider.getRandomUUID(),
       name: permissionSetName,
     });
     const createdPermissionSet = await this.licenseRepository.createPermissionSet(permissionSet);
@@ -62,7 +64,7 @@ export class LicenseService {
   }
 
   async getAllPermissionsFromPermissionSetId(permissionSetId: string) {
-    const permissions = await this.licenseRepository.getAllPermissionsFromPermissionSet(permissionSetId);
+    const permissions = await this.licenseRepository.getAllPermissionsFromPermissionSetId(permissionSetId);
     return permissions;
   }
 }

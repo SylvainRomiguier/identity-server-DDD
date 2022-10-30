@@ -9,8 +9,9 @@ export interface IUserRepository {
     updateUser: (user:User, hash?:Hash) => Promise<User>;
     removeUser: (id:string) => Promise<void>;
     getUserById: (id:string) => Promise<User>;
-    getUserByEmail: (email:Email) => Promise<User | undefined>;
+    getUserByEmail: (email:Email) => Promise<User>;
     getUserHash: (id:string) => Promise<Hash>;
     saveLicenseAttribution: (licenseAttribution: LicenseAttribution) => Promise<void>;
     getAllLicenseAttributionsFromUser: (userId:string) => Promise<LicenseAttribution[]>;
+    getActiveLicenseAttributionsFromUser: (userId:string) => Promise<LicenseAttribution[]>;
 }

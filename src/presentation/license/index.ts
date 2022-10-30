@@ -1,6 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { licenseService } from "../../dependency_injections";
-import { PermissionSetDto } from "../../domain/License/PermissionSet";
 
 export default function (server: FastifyInstance, opts: any, done: () => void) {
   server.post("/license", {

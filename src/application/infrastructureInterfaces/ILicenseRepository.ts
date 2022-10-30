@@ -13,5 +13,7 @@ export interface ILicenseRepository {
     getPermissionByName: (name:string) => Promise<Permission>;
     addPermissionToPermissionSet: (permission:Permission, permissionSet: PermissionSet) => Promise<void>;
     removePermissionFromPermissionSet: (permission:Permission, permissionSet: PermissionSet) => Promise<void>;
-    getAllPermissionsFromPermissionSet: (permissionSetId:string) => Promise<Permission[]>;
+    getAllPermissionsFromPermissionSetId: (permissionSetId:string) => Promise<Permission[]>;
+    getLicensesById: (ids:string[]) => Promise<License[]>;
+    getAllPermissionsFromPermissionSetIds: (ids:string[]) => Promise<Permission[]>;
 }

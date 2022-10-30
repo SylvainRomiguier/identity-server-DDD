@@ -1,11 +1,42 @@
-import { ILicenseRepository } from "../application/serviceInterfaces/ILicenseRepository";
+import { ILicenseRepository } from "../application/infrastructureInterfaces/ILicenseRepository";
 import { License } from "../domain/License/License";
 import { Permission } from "../domain/License/Permission";
-import { PermissionSet, PermissionSetDto } from "../domain/License/PermissionSet";
+import { PermissionSet } from "../domain/License/PermissionSet";
 import { DBService } from "./db.prisma.service";
 
 export class LicenseRepository implements ILicenseRepository {
   constructor(private dbService: DBService) {}
+  async getAllPermissionsFromPermissionSetIds(ids: string[]) {
+    const prisma = await this.dbService.getClient();
+    const permissionSets = await prisma.permissionSet.findMany({
+      where: {
+        id: { in: ids },
+      },
+      include: {
+        Permissions: true
+      }
+    });
+    await this.dbService.disconnect();
+    const permissions: string[] = permissionSets.reduce((allPermissions:string[], currentPermissionSet) => {
+      allPermissions = allPermissions.concat(currentPermissionSet.Permissions.map(p => p.name))
+      return allPermissions;
+    }, []);
+    const uniquePermissions:string[] = [...new Set(permissions)];
+    return uniquePermissions.map(up => new Permission(up));
+  }
+  async getLicensesById(ids: string[]) {
+    const prisma = await this.dbService.getClient();
+    const licenses = await prisma.license.findMany({
+      where: {
+        id: { in: ids },
+      },
+      include: {
+        PermissionSets: true,
+      },
+    });
+    await this.dbService.disconnect();
+    return licenses.map((l) => new License(l));
+  }
   async getPermissionSetById(id: string) {
     const prisma = await this.dbService.getClient();
     const permissionSet = await prisma.permissionSet.findUniqueOrThrow({
@@ -27,14 +58,14 @@ export class LicenseRepository implements ILicenseRepository {
     const license = await prisma.license.findUniqueOrThrow({
       where: { id },
       include: {
-        PermissionSets:true
-      }
+        PermissionSets: true,
+      },
     });
     await this.dbService.disconnect();
     return new License(license);
   }
 
-  async getAllPermissionsFromPermissionSet(permissionSetId: string) {
+  async getAllPermissionsFromPermissionSetId(permissionSetId: string) {
     const prisma = await this.dbService.getClient();
     const permissionSet = await prisma.permissionSet.findUnique({
       where: { id: permissionSetId },

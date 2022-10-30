@@ -1,4 +1,4 @@
-import { IUserRepository } from "../application/serviceInterfaces/IUserRepository";
+import { IUserRepository } from "../application/infrastructureInterfaces/IUserRepository";
 import { LicenseAttribution } from "../domain/User/LicenseAttribution";
 import { Email } from "../domain/User/Email";
 import { Hash } from "../domain/User/Hash";
@@ -12,6 +12,20 @@ export class UserRepository implements IUserRepository {
     const prisma = await this.dbService.getClient();
     const licensesAttributions = await prisma.licenseAttribution.findMany({
       where: { userId },
+    });
+    await this.dbService.disconnect();
+    return licensesAttributions.map((la) => new LicenseAttribution(la));
+  }
+  async getActiveLicenseAttributionsFromUser(userId: string) {
+    const prisma = await this.dbService.getClient();
+    const licensesAttributions = await prisma.licenseAttribution.findMany({
+      where: {
+        userId,
+        expirationDate: {
+          gte: new Date(new Date().getUTCDate()),
+        },
+        suspended: false,
+      },
     });
     await this.dbService.disconnect();
     return licensesAttributions.map((la) => new LicenseAttribution(la));
@@ -66,12 +80,11 @@ export class UserRepository implements IUserRepository {
   }
   async getUserByEmail(email: Email) {
     const prisma = await this.dbService.getClient();
-    const user = await prisma.user.findFirst({ where: { email: email.get() } });
+    const user = await prisma.user.findFirstOrThrow({
+      where: { email: email.get() },
+    });
     await this.dbService.disconnect();
-    if (user) {
-      return new User(user);
-    }
-    return undefined;
+    return new User(user);
   }
   async getUserHash(id: string) {
     const prisma = await this.dbService.getClient();

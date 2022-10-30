@@ -1,8 +1,8 @@
 import crypto from "crypto";
-import { IPasswordService } from "../application/serviceInterfaces/IPasswordService";
+import { IPasswordProvider } from "../application/infrastructureInterfaces/IPasswordProvider";
 import { Hash } from "../domain/User/Hash";
 
-export class PasswordService implements IPasswordService {
+export class PasswordProvider implements IPasswordProvider {
   async verifyPassword(plainTextPassword: string, hash: Hash) {
     const computedHash = await this.hasher(plainTextPassword, hash.get().salt);
     return computedHash.equalTo(hash);

@@ -1,7 +1,7 @@
 import { v4 } from "uuid";
-import { IUUIDService } from "../application/serviceInterfaces/IUUIDService";
+import { IUUIDProvider} from "../application/infrastructureInterfaces/IUUIDProvider";
 
-export class UUIDService implements IUUIDService {
+export class UUIDProvider implements IUUIDProvider {
     getRandomUUID() {
         return v4();
     }
