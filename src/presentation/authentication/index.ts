@@ -32,7 +32,7 @@ export default function (server: FastifyInstance, opts: any, done: () => void) {
   });
   server.put("/authentication/me", {
     schema: {
-      description: "Check a token and return a user",
+      description: "Check a token and return a user with permissions",
       tags: ["authentication"],
       body: {
         token: { type: "string" },
@@ -44,6 +44,7 @@ export default function (server: FastifyInstance, opts: any, done: () => void) {
             id: { type: "string" },
             firstName: { type: "string" },
             lastName: { type: "string" },
+            userName: { type: "string" },
             email: { type: "string" },
             permissions: {
               type: "array",

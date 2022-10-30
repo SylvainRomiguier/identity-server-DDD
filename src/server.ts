@@ -5,6 +5,7 @@ import userRoutes from "./presentation/user";
 import licenseRoutes from "./presentation/license";
 import permissionRoutes from "./presentation/permission";
 import permissionSetRoutes from "./presentation/permissionSet";
+import authenticationRoutes from "./presentation/authentication";
 import "./dependency_injections";
 
 const server = fastify({ logger: true });
@@ -81,6 +82,7 @@ const start = async () => {
     await server.register(licenseRoutes);
     await server.register(permissionRoutes);
     await server.register(permissionSetRoutes);
+    await server.register(authenticationRoutes);
 
     await server.register(swaggerUi, {
       routePrefix: "/documentation",
