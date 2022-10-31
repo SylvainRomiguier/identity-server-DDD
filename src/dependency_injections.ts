@@ -19,12 +19,8 @@ const userRepository = new UserRepository(dbService);
 const licenseRepository = new LicenseRepository(dbService);
 const passwordService = new PasswordProvider();
 const tokenService = new TokenProvider(
-  "-----BEGIN RSA PRIVATE KEY-----\n" +
-    process.env.PRIVATE_KEY +
-    "\n-----END RSA PRIVATE KEY-----\n",
-  "-----BEGIN PUBLIC KEY-----\n" +
-    process.env.PUBLIC_KEY +
-    "\n-----END PUBLIC KEY-----\n"
+  process.env.PRIVATE_KEY,
+  process.env.PUBLIC_KEY
 );
 
 // Application

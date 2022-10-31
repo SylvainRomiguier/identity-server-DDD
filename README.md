@@ -33,11 +33,11 @@ ssh-keygen -b 4096 -t rsa -m PEM -f [filename]
 openssl rsa -in [filename].pem -pubout > [filename].pub.pem
 ## Create a .env file with the right values
 ```
-DATABASE_URL=[your postgresql server connection string]
+DATABASE_URL="[your postgresql server connection string]"
 
-PRIVATE_KEY=[the BASE64 content of your PEM private key without beginning and ending line]
+PRIVATE_KEY="[Your PEM private key copied and pasted from your file]"
 
-PUBLIC_KEY=[the BASE64 content of your PEM public key without beginning and ending line]
+PUBLIC_KEY="[Your PEM public key copied and pasted from your file]"
 ```
 ## Run migration script to create database
 ```
