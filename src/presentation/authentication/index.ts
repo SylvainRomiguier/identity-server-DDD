@@ -30,13 +30,10 @@ export default function (server: FastifyInstance, opts: any, done: () => void) {
     },
     handler: authorizeHandler,
   });
-  server.put("/authentication/me", {
+  server.get("/authentication/me", {
     schema: {
       description: "Check a token and return a user with permissions",
       tags: ["authentication"],
-      body: {
-        token: { type: "string" },
-      },
       response: {
         200: {
           type: "object",

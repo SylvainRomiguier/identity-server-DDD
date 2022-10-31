@@ -7,3 +7,4 @@ export interface IAuthenticationService {
     authorize: (user: User, plainTextPassword: string) => Promise<Token>;
     getUser: (token:Token) => Promise<UserWithPermissions>;
 }
+
