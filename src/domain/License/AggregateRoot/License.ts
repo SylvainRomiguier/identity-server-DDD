@@ -1,35 +1,33 @@
-import { PermissionSet, PermissionSetDto } from "./PermissionSet";
+import { AggregateRoot } from "../../common/models/AggregateRoot";
+import { PermissionSet, PermissionSetDto } from "../Entities/PermissionSet";
+import { LicenseId } from "../ValueObjects/LicenseId";
 
 export type LicenseDto = {
   id: string;
   name: string;
   PermissionSets: PermissionSetDto[];
 };
-export class License {
-  private id: string;
+export class License extends AggregateRoot<LicenseId> {
   private name: string;
   private permissionSets: PermissionSet[];
   constructor(license: LicenseDto) {
-    this.id = license.id;
+    super(new LicenseId(license.id));
     this.name = license.name;
     this.permissionSets = license.PermissionSets.map(ps => new PermissionSet(ps));
   }
   get() {
     return {
-      id: this.id,
+      id: this.id.value,
       name: this.name,
       permissionSets: this.permissionSets
     };
   }
-  equalTo(license: License) {
-    return license.get().id === this.id;
-  }
   assignPermissionSet(permissionSet:PermissionSet) {
-    if(!this.permissionSets.find(ps => ps.equalTo(permissionSet))) {
+    if(!this.permissionSets.find(ps => ps.equals(permissionSet))) {
       this.permissionSets.push(permissionSet);
     }
   }
   removePermissionSet(permissionSet:PermissionSet) {
-    this.permissionSets = this.permissionSets.filter(ps => !ps.equalTo(permissionSet));
+    this.permissionSets = this.permissionSets.filter(ps => !ps.equals(permissionSet));
   }
 }

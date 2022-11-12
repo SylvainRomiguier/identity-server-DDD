@@ -1,5 +1,5 @@
-import { Token } from "../../domain/Authentication/Token";
-import { TokenPayload } from "../../domain/Authentication/TokenPayload";
+import { Token } from "../../domain/User/ValueObjects/Token";
+import { TokenPayload } from "../../domain/User/ValueObjects/TokenPayload";
 
 export interface ITokenProvider {
     verify: (token:Token) => TokenPayload;

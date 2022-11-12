@@ -1,8 +1,9 @@
-import { License } from "../../domain/License/License";
-import { Permission } from "../../domain/License/Permission";
-import { Hash } from "../../domain/User/Hash";
-import { LicenseAttribution } from "../../domain/User/LicenseAttribution";
-import { User, UserDto } from "../../domain/User/User";
+import { License } from "../../domain/License/AggregateRoot/License";
+import { Permission } from "../../domain/License/ValueObjects/Permission";
+import { Hash } from "../../domain/User/ValueObjects/Hash";
+import { LicenseAttribution } from "../../domain/User/Entities/LicenseAttribution";
+import { Password } from "../../domain/User/ValueObjects/Password";
+import { User, UserDto } from "../../domain/User/AggregateRoots/User";
 
 export interface IUserService {
   create: (user: Omit<UserDto, "id"> & { password: string }) => Promise<User>;
@@ -19,7 +20,7 @@ export interface IUserService {
 
   createPassword: (plainTextPassword: string) => Promise<Hash>;
 
-  isPasswordValid: (user: User, plainTextPassword: string) => Promise<boolean>;
+  isPasswordValid: (user: User, password:Password) => Promise<boolean>;
   assignNewLicense: (
     user: User,
     license: License,

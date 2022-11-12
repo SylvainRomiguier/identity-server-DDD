@@ -1,3 +1,8 @@
+import { Entity } from "../../common/models/Entity";
+import { LicenseId } from "../../License/ValueObjects/LicenseId";
+import { LicenseAttributionId } from "../ValueObjects/LicenseAttributionId";
+import { UserId } from "../ValueObjects/UserId";
+
 export type LicenseAttributionDto = {
   userId: string;
   licenseId: string;
@@ -5,30 +10,18 @@ export type LicenseAttributionDto = {
   suspended: boolean;
 };
 
-export class LicenseAttribution {
-  private userId: string;
-  private licenseId: string;
+export class LicenseAttribution extends Entity<LicenseAttributionId> {
   private expirationDate: Date;
   private suspended: boolean;
   constructor(licenseAttribution: LicenseAttributionDto) {
-    this.userId = licenseAttribution.userId;
-    this.licenseId = licenseAttribution.licenseId;
+    super(new LicenseAttributionId(new UserId(licenseAttribution.userId), new LicenseId(licenseAttribution.licenseId)));
     this.expirationDate = licenseAttribution.expirationDate;
     this.suspended = licenseAttribution.suspended;
   }
   get() {
     return {
-      userId: this.userId,
-      licenseId: this.licenseId,
       expirationDate: this.expirationDate,
       suspended: this.suspended,
     };
-  }
-
-  equalTo(licenseAttribution: LicenseAttribution) {
-    return (
-      licenseAttribution.userId === this.userId &&
-      licenseAttribution.licenseId === this.licenseId
-    );
   }
 }

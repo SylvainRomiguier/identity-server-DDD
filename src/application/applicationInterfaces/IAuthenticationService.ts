@@ -1,10 +1,14 @@
 
-import { Token } from "../../domain/Authentication/Token";
-import { User } from "../../domain/User/User";
-import { UserWithPermissions } from "../../domain/User/UserWithPermissions";
+import { Token } from "../../domain/User/ValueObjects/Token";
+import { Password } from "../../domain/User/ValueObjects/Password";
+import { User } from "../../domain/User/AggregateRoots/User";
+import { Permission } from "../../domain/License/ValueObjects/Permission";
 
 export interface IAuthenticationService {
-    authorize: (user: User, plainTextPassword: string) => Promise<Token>;
-    getUser: (token:Token) => Promise<UserWithPermissions>;
+    authorize: (user: User, password: Password) => Promise<Token>;
+    getUserWithPermissions: (token:Token) => Promise<{
+        user: User,
+        permissions: Permission[]
+    }>;
 }
 

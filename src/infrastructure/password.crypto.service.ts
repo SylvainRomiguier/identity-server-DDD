@@ -1,11 +1,11 @@
 import crypto from "crypto";
 import { IPasswordProvider } from "../application/infrastructureInterfaces/IPasswordProvider";
-import { Hash } from "../domain/User/Hash";
+import { Hash } from "../domain/User/ValueObjects/Hash";
 
 export class PasswordProvider implements IPasswordProvider {
   async verifyPassword(plainTextPassword: string, hash: Hash) {
-    const computedHash = await this.hasher(plainTextPassword, hash.get().salt);
-    return computedHash.equalTo(hash);
+    const computedHash = await this.hasher(plainTextPassword, hash.value.salt);
+    return computedHash.equals(hash);
   }
   async createPassword(plainTextPassword: string) {
     return await this.hasher(plainTextPassword, await this.generateSalt(12));

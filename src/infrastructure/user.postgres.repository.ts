@@ -1,9 +1,9 @@
 import { IUserRepository } from "../application/infrastructureInterfaces/IUserRepository";
-import { LicenseAttribution } from "../domain/User/LicenseAttribution";
-import { Email } from "../domain/User/Email";
-import { Hash } from "../domain/User/Hash";
-import { NewUser } from "../domain/User/NewUser";
-import { User } from "../domain/User/User";
+import { LicenseAttribution } from "../domain/User/Entities/LicenseAttribution";
+import { Email } from "../domain/User/ValueObjects/Email";
+import { Hash } from "../domain/User/ValueObjects/Hash";
+import { NewUser } from "../domain/User/AggregateRoots/NewUser";
+import { User } from "../domain/User/AggregateRoots/User";
 import { DBService } from "./db.prisma.service";
 
 export class UserRepository implements IUserRepository {
@@ -32,7 +32,12 @@ export class UserRepository implements IUserRepository {
   }
   async saveLicenseAttribution(licenseAttribution: LicenseAttribution) {
     const prisma = await this.dbService.getClient();
-    await prisma.licenseAttribution.create({ data: licenseAttribution.get() });
+    await prisma.licenseAttribution.create({ data: {
+      userId: licenseAttribution.id.value.userId,
+      licenseId: licenseAttribution.id.value.licenseId,
+      expirationDate: licenseAttribution.get().expirationDate,
+      suspended: licenseAttribution.get().suspended
+    } });
     await this.dbService.disconnect();
   }
   async addUser(user: NewUser) {
@@ -44,8 +49,8 @@ export class UserRepository implements IUserRepository {
         lastName: user.get().lastName,
         userName: user.get().userName,
         email: user.get().email,
-        password: user.get().hash.get().hashedPassword,
-        salt: user.get().hash.get().salt,
+        password: user.hash.hashedPassword,
+        salt: user.hash.salt,
       },
     });
     await this.dbService.disconnect();
@@ -60,8 +65,8 @@ export class UserRepository implements IUserRepository {
         lastName: user.get().lastName,
         userName: user.get().userName,
         email: user.get().email,
-        password: hash?.get().hashedPassword,
-        salt: hash?.get().salt,
+        password: hash?.value.hashedPassword,
+        salt: hash?.value.salt,
       },
     });
     await this.dbService.disconnect();
@@ -81,7 +86,7 @@ export class UserRepository implements IUserRepository {
   async getUserByEmail(email: Email) {
     const prisma = await this.dbService.getClient();
     const user = await prisma.user.findFirstOrThrow({
-      where: { email: email.get() },
+      where: { email: email.value },
     });
     await this.dbService.disconnect();
     return new User(user);

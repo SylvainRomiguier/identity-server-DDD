@@ -1,6 +1,7 @@
 import fastify from "fastify";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
+import cors from '@fastify/cors';
 import userRoutes from "./presentation/user";
 import licenseRoutes from "./presentation/license";
 import permissionRoutes from "./presentation/permission";
@@ -12,6 +13,10 @@ const server = fastify({ logger: true });
 
 const start = async () => {
   try {
+    await server.register(cors, {
+      origin: "*",
+      methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+    });
     await server.register(swagger, {
       swagger: {
         info: {

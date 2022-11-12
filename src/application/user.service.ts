@@ -1,13 +1,12 @@
-import { License } from "../domain/License/License";
-import { Email } from "../domain/User/Email";
-import { Hash } from "../domain/User/Hash";
-import { NewUser } from "../domain/User/NewUser";
-import { Password } from "../domain/User/Password";
-import { User, UserDto } from "../domain/User/User";
+import { License } from "../domain/License/AggregateRoot/License";
+import { Email } from "../domain/User/ValueObjects/Email";
+import { Hash } from "../domain/User/ValueObjects/Hash";
+import { NewUser } from "../domain/User/AggregateRoots/NewUser";
+import { Password } from "../domain/User/ValueObjects/Password";
+import { User, UserDto } from "../domain/User/AggregateRoots/User";
 import { IUserService } from "./applicationInterfaces/IUserService";
 import { ILicenseRepository } from "./infrastructureInterfaces/ILicenseRepository";
 import { IPasswordProvider } from "./infrastructureInterfaces/IPasswordProvider";
-import { ITokenProvider } from "./infrastructureInterfaces/ITokenProvider";
 import { IUserRepository } from "./infrastructureInterfaces/IUserRepository";
 import { IUUIDProvider } from "./infrastructureInterfaces/IUUIDProvider";
 
@@ -19,11 +18,13 @@ export class UserService implements IUserService {
     private licenseRepository: ILicenseRepository
   ) {}
   async create(user: Omit<UserDto, "id"> & { password: string }) {
-    const newUser = new NewUser({
-      id: this.uuidProvider.getRandomUUID(),
-      hash: await this.passwordProvider.createPassword(user.password),
-      ...user,
-    });
+    const newUser = new NewUser(
+      {
+        id: this.uuidProvider.getRandomUUID(),
+        ...user,
+      },
+      await this.passwordProvider.createPassword(user.password)
+    );
     const persistedUser = await this.userRepository.addUser(newUser);
     return persistedUser;
   }
@@ -58,15 +59,11 @@ export class UserService implements IUserService {
 
   async createPassword(plainTextPassword: string): Promise<Hash> {
     const password = new Password(plainTextPassword);
-    return this.passwordProvider.createPassword(password.get());
+    return this.passwordProvider.createPassword(password.value);
   }
-  async isPasswordValid(
-    user: User,
-    plainTextPassword: string
-  ): Promise<boolean> {
-    const password = new Password(plainTextPassword);
+  async isPasswordValid(user: User, password: Password): Promise<boolean> {
     const hash = await this.userRepository.getUserHash(user.get().id);
-    return this.passwordProvider.verifyPassword(password.get(), hash);
+    return this.passwordProvider.verifyPassword(password.value, hash);
   }
   async assignNewLicense(
     user: User,
@@ -87,7 +84,7 @@ export class UserService implements IUserService {
         user.get().id
       );
     const activeLicenses = await this.licenseRepository.getLicensesById(
-      activeLicenseAttributions.map((ala) => ala.get().licenseId)
+      activeLicenseAttributions.map((ala) => ala.id.value.licenseId)
     );
     return activeLicenses;
   }

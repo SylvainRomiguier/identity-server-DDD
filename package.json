@@ -19,6 +19,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
+    "@fastify/cors": "^8.1.1",
     "@fastify/swagger": "^8.0.0",
     "@fastify/swagger-ui": "^1.1.0",
     "@prisma/client": "^4.5.0",

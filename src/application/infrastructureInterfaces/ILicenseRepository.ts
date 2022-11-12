@@ -1,6 +1,6 @@
-import { License } from "../../domain/License/License";
-import { Permission } from "../../domain/License/Permission";
-import { PermissionSet } from "../../domain/License/PermissionSet";
+import { License } from "../../domain/License/AggregateRoot/License";
+import { Permission } from "../../domain/License/ValueObjects/Permission";
+import { PermissionSet } from "../../domain/License/Entities/PermissionSet";
 
 export interface ILicenseRepository {
     createLicense: (license:License) => Promise<License>;

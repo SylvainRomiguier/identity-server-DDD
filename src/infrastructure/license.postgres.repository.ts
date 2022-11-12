@@ -1,7 +1,7 @@
 import { ILicenseRepository } from "../application/infrastructureInterfaces/ILicenseRepository";
-import { License } from "../domain/License/License";
-import { Permission } from "../domain/License/Permission";
-import { PermissionSet } from "../domain/License/PermissionSet";
+import { License } from "../domain/License/AggregateRoot/License";
+import { Permission } from "../domain/License/ValueObjects/Permission";
+import { PermissionSet } from "../domain/License/Entities/PermissionSet";
 import { DBService } from "./db.prisma.service";
 
 export class LicenseRepository implements ILicenseRepository {
@@ -100,7 +100,7 @@ export class LicenseRepository implements ILicenseRepository {
       where: { id: permissionSet.get().id },
       data: {
         Permissions: {
-          connect: [{ name: permission.get() }],
+          connect: [{ name: permission.name }],
         },
       },
     });
@@ -116,7 +116,7 @@ export class LicenseRepository implements ILicenseRepository {
       where: { id: permissionSet.get().id },
       data: {
         Permissions: {
-          disconnect: [{ name: permission.get() }],
+          disconnect: [{ name: permission.name }],
         },
       },
     });
@@ -125,7 +125,7 @@ export class LicenseRepository implements ILicenseRepository {
   async createPermission(permission: Permission) {
     const prisma = await this.dbService.getClient();
     const createdPermission = await prisma.permission.create({
-      data: { name: permission.get() },
+      data: { name: permission.name },
     });
     await this.dbService.disconnect();
     return new Permission(createdPermission.name);

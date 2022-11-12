@@ -1,8 +1,8 @@
-import { LicenseAttribution } from "../../domain/User/LicenseAttribution";
-import { Email } from "../../domain/User/Email";
-import { Hash } from "../../domain/User/Hash";
-import { NewUser } from "../../domain/User/NewUser";
-import { User } from "../../domain/User/User";
+import { LicenseAttribution } from "../../domain/User/Entities/LicenseAttribution";
+import { Email } from "../../domain/User/ValueObjects/Email";
+import { Hash } from "../../domain/User/ValueObjects/Hash";
+import { NewUser } from "../../domain/User/AggregateRoots/NewUser";
+import { User } from "../../domain/User/AggregateRoots/User";
 
 export interface IUserRepository {
     addUser: (user:NewUser) => Promise<User>;

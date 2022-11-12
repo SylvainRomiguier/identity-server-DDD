@@ -1,5 +1,7 @@
-export class Password {
-  private value: string;
+import { ValueObject } from "../../common/models/ValueObject";
+
+export class Password extends ValueObject {
+  private _value: string;
   constructor(plainTextPassword: string) {
     const oneNumberRule = "^.*[0-9].*$";
     const oneCapRule = "^.*[A-Z].*$";
@@ -18,15 +20,16 @@ export class Password {
 
     if (!valid) {
       throw new Error(
-        `the password should be at least 6 characters, contains at leat 1 number, 1 upper case letter and 1 special character : #$%&*+/=?_-`
+        `the password should be at least 6 characters, contains at least 1 number, 1 upper case letter and 1 special character : #$%&*+/=?_-`
       );
     }
-    this.value = plainTextPassword;
+    super();
+    this._value = plainTextPassword;
   }
-  get () {
-    return this.value;
+  get value() {
+    return this._value;
   }
-  equalTo (plainTextPassword:string) {
-    return plainTextPassword === this.value;
+  getEqualityComponents(): (string | number)[] {
+    return [this._value];
   }
 }

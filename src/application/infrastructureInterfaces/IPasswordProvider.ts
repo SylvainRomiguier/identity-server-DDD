@@ -1,4 +1,4 @@
-import { Hash } from "../../domain/User/Hash";
+import { Hash } from "../../domain/User/ValueObjects/Hash";
 
 export interface IPasswordProvider {
     createPassword: (plainTextPassword:string) => Promise<Hash>;

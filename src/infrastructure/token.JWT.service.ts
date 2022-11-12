@@ -1,10 +1,10 @@
 import jsonwebtoken from "jsonwebtoken";
 import { ITokenProvider } from "../application/infrastructureInterfaces/ITokenProvider";
-import { Token } from "../domain/Authentication/Token";
+import { Token } from "../domain/User/ValueObjects/Token";
 import {
   PayloadDto,
   TokenPayload,
-} from "../domain/Authentication/TokenPayload";
+} from "../domain/User/ValueObjects/TokenPayload";
 import fs from "fs";
 
 const findFirstDiff = (str1: string, str2: string) =>
@@ -17,7 +17,7 @@ export class TokenProvider implements ITokenProvider {
     }
   }
   verify(token: Token) {   
-    const payload = jsonwebtoken.verify(token.get(), this.publicKey, {
+    const payload = jsonwebtoken.verify(token.value, this.publicKey, {
       algorithms: ["RS256"],
     });
     if (!(payload as PayloadDto)) {
